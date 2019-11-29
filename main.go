@@ -14,10 +14,34 @@ type data struct {
 	Price float64
 }
 
-func main() {
-	d := getData("https://www.vivobarefoot.com/es/mens/everyday/gobi-ii-mens?colour=Black")
+var p = []string{
+"https://www.vivobarefoot.com/es/mens/everyday/gobi-ii-mens?colour=Black",
+"https://www.vivobarefoot.com/eu/mens/outdoor/primus-trail-fg-mens-ow5?colour=Charcoal",
+"https://www.vivobarefoot.com/eu/mens/outdoor/tracker-fg-mens?colour=Dark+Brown",
+"https://www.vivobarefoot.com/eu/mens/active/primus-lite-mens-ow5?colour=Obsidian",
+"https://www.vivobarefoot.com/eu/mens/outdoor/primus-trail-sg-mens?colour=Black",
+"https://www.vivobarefoot.com/eu/mens/everyday/ra-ii-mens?colour=Midnight+Navy",
+"https://www.vivobarefoot.com/eu/mens/active/primus-knit-lux-mens?colour=Black",
+"https://www.vivobarefoot.com/eu/mens/active/primus-knit-mens?colour=Mood+Indigo",
+}
 
-	fmt.Println(d)
+func main() {
+	n := len(p)
+	d := make(chan data, n)
+
+	go getAllUrls(d)
+
+	for r := range d {
+		fmt.Println(r)
+	}
+}
+
+func getAllUrls(d chan data) {
+	for _, u := range p {
+		fmt.Println("URL: " + u)
+		d <- getData(u)
+	}
+	close(d)
 }
 
 func getData(u string) data {
